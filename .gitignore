@@ -1,0 +1,21 @@
+# Log files
+*.log
+
+# CSV output files
+*.csv
+
+# Python virtual environment
+venv/
+.venv/
+env/
+.env
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# IDE files
+.idea/
+.vscode/
