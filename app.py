@@ -20,7 +20,7 @@ def load_data():
     dtypes = {'JANコード': pl.Utf8, '型番': pl.Utf8}
 
     df = pl.concat([
-        pl.read_csv(file, infer_schema_length=10000, dtypes=dtypes).select(columns)
+        pl.read_csv(file, infer_schema_length=100000, dtypes=dtypes).select(columns)
         for file in csv_files
     ])
     return df
