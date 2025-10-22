@@ -26,10 +26,6 @@ header {
 
 .result-container {
     margin-top: 20px;
-    max-height: 500px; /* Adjust as needed */
-    overflow-y: auto;
-    border: 1px solid #ccc;
-    padding: 10px;
 }
 
 .result-info {
@@ -53,4 +49,41 @@ th, td {
 
 th {
     background-color: #f2f2f2;
+}
+
+/* Pagination Styles */
+.pagination-container {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.pagination {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+}
+
+.page-item {
+    margin: 0 5px;
+}
+
+.page-link {
+    display: block;
+    padding: 8px 12px;
+    text-decoration: none;
+    color: #007bff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.page-link:hover {
+    background-color: #f2f2f2;
+}
+
+.page-item.active .page-link {
+    background-color: #007bff;
+    color: white;
+    border-color: #007bff;
 }

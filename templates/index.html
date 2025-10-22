@@ -32,7 +32,7 @@
 
         <div class="result-container">
             <div class="result-info">
-                <span id="search-count">検索件数: 0 件</span>
+                <span id="search-count">検索件数: {{ total_items }} 件</span>
                 <button id="export-csv">csvに出力</button>
             </div>
             <table id="result-table">
@@ -48,7 +48,7 @@
                 <tbody>
                     {% for result in results %}
                     <tr>
-                        <td>{{ loop.index }}</td>
+                        <td>{{ ( (current_page - 1) * 50 ) + loop.index }}</td>
                         <td>{{ result['薬品名(和名)'] or '' }}</td>
                         <td>{{ result['薬品名(英名)'] or '' }}</td>
                         <td>{{ result['型番'] or '' }}</td>
@@ -57,10 +57,22 @@
                     {% endfor %}
                 </tbody>
             </table>
-            <p id="no-results-message" style="display: none;">該当する製品が見つかりませんでした。</p>
+            <p id="no-results-message" style="display: {% if not results %}block{% else %}none{% endif %};">該当する製品が見つかりませんでした。</p>
         </div>
+
+        <nav class="pagination-container" aria-label="Page navigation">
+            <ul id="pagination" class="pagination">
+                <!-- Pagination links will be inserted here -->
+            </ul>
+        </nav>
     </main>
 
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script>
+        // Initial pagination setup
+        document.addEventListener('DOMContentLoaded', () => {
+            updatePagination({{ total_pages }}, {{ current_page }});
+        });
+    </script>
 </body>
 </html>

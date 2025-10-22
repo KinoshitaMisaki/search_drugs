@@ -4,8 +4,10 @@ import os
 from io import BytesIO
 import glob
 import datetime
+import math
 
 app = Flask(__name__)
+ITEMS_PER_PAGE = 50
 
 # Load data
 def load_data():
@@ -15,10 +17,10 @@ def load_data():
 
     columns = ['薬品名(和名)', '薬品名(英名)', 'JANコード', 'メーカー名', '型番']
     # Define dtypes to prevent schema errors
-    schema = {'JANコード': pl.Utf8, '型番': pl.Utf8}
+    schema_overrides = {'JANコード': pl.Utf8, '型番': pl.Utf8}
 
     df = pl.concat([
-        pl.read_csv(file, infer_schema_length=500000, dtypes=schema).select(columns)
+        pl.read_csv(file, infer_schema_length=500000, schema_overrides=schema_overrides).select(columns)
         for file in csv_files
     ])
     return df
@@ -42,17 +44,44 @@ def filter_data(product_name, manufacturer, model_number):
 
 @app.route('/')
 def index():
-    all_data = data.to_dicts()
-    return render_template('index.html', results=all_data)
+    page = request.args.get('page', 1, type=int)
+    offset = (page - 1) * ITEMS_PER_PAGE
+
+    total_items = len(data)
+    total_pages = math.ceil(total_items / ITEMS_PER_PAGE)
+
+    paginated_data = data.slice(offset, ITEMS_PER_PAGE).to_dicts()
+
+    return render_template(
+        'index.html',
+        results=paginated_data,
+        total_pages=total_pages,
+        current_page=page,
+        total_items=total_items
+    )
 
 @app.route('/search')
 def search():
+    page = request.args.get('page', 1, type=int)
     product_name = request.args.get('product_name', '')
     manufacturer = request.args.get('manufacturer', '')
     model_number = request.args.get('model_number', '')
 
     filtered_df = filter_data(product_name, manufacturer, model_number)
-    return jsonify(filtered_df.to_dicts())
+
+    total_items = len(filtered_df)
+    total_pages = math.ceil(total_items / ITEMS_PER_PAGE)
+
+    offset = (page - 1) * ITEMS_PER_PAGE
+    paginated_data = filtered_df.slice(offset, ITEMS_PER_PAGE).to_dicts()
+
+    return jsonify({
+        'results': paginated_data,
+        'total_pages': total_pages,
+        'current_page': page,
+        'total_items': total_items
+    })
+
 
 @app.route('/export_csv')
 def export_csv():
