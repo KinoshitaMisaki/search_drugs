@@ -3,6 +3,7 @@
 
 # CSV output files
 *.csv
+csvs/
 
 # Python virtual environment
 venv/

@@ -12,17 +12,27 @@ ITEMS_PER_PAGE = 50
 # Load data
 def load_data():
     csv_files = glob.glob('csvs/*.csv')
+    xlsx_files = glob.glob('csvs/*.xlsx')
     if not csv_files:
         return pl.DataFrame()
 
-    columns = ['薬品名(和名)', '薬品名(英名)', 'JANコード', 'メーカー名', '型番']
+    columns = ['薬品名(和名)', '薬品名(英名)', 'メーカー名', '型番']
     # Define dtypes to prevent schema errors
     dtypes = {'JANコード': pl.Utf8, '型番': pl.Utf8}
 
-    df = pl.concat([
+    df1 = pl.concat([
         pl.read_csv(file, infer_schema_length=100000, dtypes=dtypes).select(columns)
         for file in csv_files
     ])
+
+    df2 = pl.concat([
+    pl.read_excel(file,sheet_name="Chemical",
+                    read_csv_options={"infer_schema_length": 100000, "skip_rows":0, "ignore_errors":True, "has_header":True}).slice(2,None).select(columns)
+    for file in xlsx_files
+    ])
+    
+    df = pl.concat([df1, df2])
+
     return df
 
 data = load_data()
