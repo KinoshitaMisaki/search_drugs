@@ -46,7 +46,15 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- Search results will be inserted here -->
+                    {% for result in results %}
+                    <tr>
+                        <td>{{ loop.index }}</td>
+                        <td>{{ result['薬品名(和名)'] or '' }}</td>
+                        <td>{{ result['薬品名(英名)'] or '' }}</td>
+                        <td>{{ result['型番'] or '' }}</td>
+                        <td>{{ result['メーカー名'] or '' }}</td>
+                    </tr>
+                    {% endfor %}
                 </tbody>
             </table>
             <p id="no-results-message" style="display: none;">該当する製品が見つかりませんでした。</p>

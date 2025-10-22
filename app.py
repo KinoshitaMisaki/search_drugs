@@ -1,4 +1,3 @@
-#test
 from flask import Flask, render_template, request, jsonify
 import polars as pl
 import os
@@ -43,7 +42,8 @@ def filter_data(product_name, manufacturer, model_number):
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    all_data = data.to_dicts()
+    return render_template('index.html', results=all_data)
 
 @app.route('/search')
 def search():

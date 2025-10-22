@@ -9,9 +9,6 @@ document.addEventListener('DOMContentLoaded', () => {
         performSearch();
     });
 
-    // Initial search to show all data
-    performSearch();
-
     async function performSearch() {
         const formData = new FormData(searchForm);
         const params = new URLSearchParams(formData);

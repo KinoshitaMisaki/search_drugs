@@ -26,6 +26,10 @@ header {
 
 .result-container {
     margin-top: 20px;
+    max-height: 500px; /* Adjust as needed */
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    padding: 10px;
 }
 
 .result-info {
