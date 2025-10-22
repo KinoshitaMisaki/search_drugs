@@ -28,17 +28,24 @@ def load_data():
 data = load_data()
 
 def filter_data(product_name, manufacturer, model_number):
-    """Filters the dataframe based on search criteria."""
+    """Filters the dataframe based on search criteria in a case-insensitive manner."""
     filtered_df = data
     if product_name:
+        product_name_lower = product_name.lower()
         filtered_df = filtered_df.filter(
-            pl.col('薬品名(和名)').str.contains(product_name, literal=False) |
-            pl.col('薬品名(英名)').str.contains(product_name, literal=False)
+            pl.col('薬品名(和名)').str.to_lowercase().str.contains(product_name_lower, literal=False) |
+            pl.col('薬品名(英名)').str.to_lowercase().str.contains(product_name_lower, literal=False)
         )
     if manufacturer:
-        filtered_df = filtered_df.filter(pl.col('メーカー名').str.contains(manufacturer, literal=False))
+        manufacturer_lower = manufacturer.lower()
+        filtered_df = filtered_df.filter(
+            pl.col('メーカー名').str.to_lowercase().str.contains(manufacturer_lower, literal=False)
+        )
     if model_number:
-        filtered_df = filtered_df.filter(pl.col('型番').str.contains(model_number, literal=False))
+        model_number_lower = model_number.lower()
+        filtered_df = filtered_df.filter(
+            pl.col('型番').str.to_lowercase().str.contains(model_number_lower, literal=False)
+        )
     return filtered_df
 
 
