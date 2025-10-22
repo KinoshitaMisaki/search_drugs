@@ -52,33 +52,69 @@ function updatePagination(totalPages, currentPage) {
     const paginationUl = document.getElementById('pagination');
     paginationUl.innerHTML = '';
 
+    const createPageLink = (page, text = page) => {
+        const li = document.createElement('li');
+        li.className = `page-item ${page === currentPage ? 'active' : ''}`;
+        li.innerHTML = `<a class="page-link" href="#" data-page="${page}">${text}</a>`;
+        return li;
+    };
+
+    const createEllipsis = () => {
+        const li = document.createElement('li');
+        li.className = 'page-item disabled';
+        li.innerHTML = `<span class="page-link">...</span>`;
+        return li;
+    };
+
     // Previous button
     if (currentPage > 1) {
-        const prevLi = document.createElement('li');
-        prevLi.className = 'page-item';
-        prevLi.innerHTML = `<a class="page-link" href="#" data-page="${currentPage - 1}">前へ</a>`;
-        paginationUl.appendChild(prevLi);
+        paginationUl.appendChild(createPageLink(currentPage - 1, '前へ'));
     }
 
-    // Page numbers
-    // This is a simple implementation. For large number of pages, you might want a more complex one (e.g., showing only a range of pages)
-    for (let i = 1; i <= totalPages; i++) {
-        const li = document.createElement('li');
-        li.className = `page-item ${i === currentPage ? 'active' : ''}`;
-        li.innerHTML = `<a class="page-link" href="#" data-page="${i}">${i}</a>`;
-        paginationUl.appendChild(li);
+    // Page numbers logic
+    const pagesToShow = [];
+    if (totalPages <= 7) {
+        for (let i = 1; i <= totalPages; i++) {
+            pagesToShow.push(i);
+        }
+    } else {
+        pagesToShow.push(1);
+        if (currentPage > 3) {
+            pagesToShow.push('...');
+        }
+        if (currentPage > 2) {
+            pagesToShow.push(currentPage - 1);
+        }
+        if (currentPage !== 1 && currentPage !== totalPages) {
+            pagesToShow.push(currentPage);
+        }
+        if (currentPage < totalPages - 1) {
+            pagesToShow.push(currentPage + 1);
+        }
+        if (currentPage < totalPages - 2) {
+            pagesToShow.push('...');
+        }
+        pagesToShow.push(totalPages);
     }
+
+    // Create unique page links
+    const uniquePages = [...new Set(pagesToShow)];
+    uniquePages.forEach(page => {
+        if (page === '...') {
+            paginationUl.appendChild(createEllipsis());
+        } else {
+            paginationUl.appendChild(createPageLink(page));
+        }
+    });
+
 
     // Next button
     if (currentPage < totalPages) {
-        const nextLi = document.createElement('li');
-        nextLi.className = 'page-item';
-        nextLi.innerHTML = `<a class="page-link" href="#" data-page="${currentPage + 1}">次へ</a>`;
-        paginationUl.appendChild(nextLi);
+        paginationUl.appendChild(createPageLink(currentPage + 1, '次へ'));
     }
 
     // Add event listeners to new links
-    document.querySelectorAll('.page-link').forEach(link => {
+    document.querySelectorAll('.page-link[data-page]').forEach(link => {
         link.addEventListener('click', (e) => {
             e.preventDefault();
             const page = parseInt(e.target.dataset.page);
