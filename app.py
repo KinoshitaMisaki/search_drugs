@@ -14,8 +14,11 @@ def load_data():
         return pl.DataFrame()
 
     columns = ['薬品名(和名)', '薬品名(英名)', 'JANコード', 'メーカー名', '型番']
+    # Define dtypes to prevent schema errors
+    schema = {'JANコード': pl.Utf8, '型番': pl.Utf8}
+
     df = pl.concat([
-        pl.read_csv(file, infer_schema_length=500000).select(columns)
+        pl.read_csv(file, infer_schema_length=500000, dtypes=schema).select(columns)
         for file in csv_files
     ])
     return df
